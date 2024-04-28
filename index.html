@@ -1,31 +1,117 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Voice to Text Converter</title>
-  </head>
-  <body>
-		<textarea id = "result" rows="8" cols="80"></textarea> <br>
-    <button id = "start">Start</button>
-		<button id = "stop">Stop</button>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voice to Text Converter</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #8e24aa, #311b92); /* gradasi ungu terang dan ungu gelap */
+    color: white;
+    transition: background-color 0.5s; /* animasi untuk perubahan warna latar belakang */
+  }
 
-		<script type="text/javascript">
-			var startButton = document.getElementById('start');
-			var stopButton = document.getElementById('stop');
-			var resultElement = document.getElementById('result');
+  #container {
+    text-align: center;
+    padding: 20px;
+    background-color: white; /* Warna putih untuk kotak input */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.5s; /* animasi untuk perubahan warna latar belakang */
+  }
 
-			var recognition = new webkitSpeechRecognition();
+  h2 {
+    margin-top: 0;
+    color: #8e24aa; /* Warna ungu terang */
+  }
 
-			recognition.lang = window.navigator.language;
-			recognition.interimResults = true;
+  textarea {
+    width: 300px;
+    height: 150px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    resize: none;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: black; /* Warna teks menjadi hitam */
+  }
 
-			startButton.addEventListener('click', () => { recognition.start(); });
-			stopButton.addEventListener('click', () => { recognition.stop(); });
+  button {
+    padding: 10px 20px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
 
-			recognition.addEventListener('result', (event) => {
-				const result = event.results[event.results.length - 1][0].transcript;
-				resultElement.textContent = result;
-			});
-		</script>
-  </body>
+  button:hover {
+    background-color: #45a049;
+  }
+
+  /* Animasi untuk tombol Start */
+  @keyframes pulse {
+    0% {
+      background-color: #4CAF50;
+    }
+    50% {
+      background-color: #388e3c;
+    }
+    100% {
+      background-color: #4CAF50;
+    }
+  }
+
+  .pulse-animation {
+    animation: pulse 1s infinite;
+  }
+</style>
+</head>
+<body>
+<div id="container">
+  <h2>Speech to Text Converter</h2> <!-- Teks baru di sini -->
+  <textarea id="result" rows="8" cols="50" placeholder="Click 'Start' and speak..."></textarea>
+  <br>
+  <button id="start">Start</button>
+  <button id="stop">Stop</button>
+</div>
+
+<script>
+  var startButton = document.getElementById('start');
+  var stopButton = document.getElementById('stop');
+  var resultElement = document.getElementById('result');
+
+  var recognition = new webkitSpeechRecognition();
+  recognition.lang = 'id-ID';
+  recognition.interimResults = true;
+
+  startButton.addEventListener('click', () => {
+    startButton.classList.add('pulse-animation'); // tambahkan kelas animasi
+    recognition.start();
+  });
+
+  stopButton.addEventListener('click', () => {
+    startButton.classList.remove('pulse-animation'); // hapus kelas animasi
+    recognition.stop();
+  });
+
+  recognition.addEventListener('result', (event) => {
+    var finalTranscript = '';
+    for (var i = 0; i < event.results.length; ++i) {
+      finalTranscript += event.results[i][0].transcript;
+    }
+    resultElement.textContent = finalTranscript;
+  });
+</script>
+</body>
 </html>
