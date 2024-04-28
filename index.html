@@ -91,31 +91,48 @@
   var stopButton = document.getElementById('stop');
   var resultElement = document.getElementById('result');
   var recognition;
+  var currentText = ''; // Variabel penampung untuk teks yang sudah ada sebelumnya
 
   function startRecognition() {
+    if (!('webkitSpeechRecognition' in window)) {
+      alert('Browser tidak mendukung fitur pengenalan suara.');
+      return;
+    }
+
     recognition = new webkitSpeechRecognition();
     recognition.lang = 'id-ID';
     recognition.interimResults = true;
     recognition.continuous = true;
 
-    recognition.addEventListener('result', (event) => {
-      var finalTranscript = '';
-      for (var i = 0; i < event.results.length; ++i) {
-        finalTranscript += event.results[i][0].transcript;
+    recognition.onresult = function(event) {
+      var interimTranscript = '';
+      for (var i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          currentText += event.results[i][0].transcript + ' '; // Tambahkan teks hasil pengenalan suara ke teks yang sudah ada sebelumnya
+        } else {
+          interimTranscript += event.results[i][0].transcript;
+        }
       }
-      resultElement.value = finalTranscript; // Menggunakan "=" untuk mengganti teks yang sudah ada dengan teks baru
-    });
+      resultElement.value = currentText + interimTranscript; // Gabungkan teks yang sudah ada dengan teks interim
+    };
+
+    recognition.onerror = function(event) {
+      alert('Error dalam pengenalan suara: ' + event.error);
+    };
+
+    recognition.onend = function() {
+      startButton.classList.remove('pulse-animation');
+    };
 
     recognition.start();
   }
 
-  startButton.addEventListener('click', () => {
-    startButton.classList.add('pulse-animation'); // tambahkan kelas animasi
+  startButton.addEventListener('click', function() {
+    startButton.classList.add('pulse-animation');
     startRecognition();
   });
 
-  stopButton.addEventListener('click', () => {
-    startButton.classList.remove('pulse-animation'); // hapus kelas animasi
+  stopButton.addEventListener('click', function() {
     if (recognition) {
       recognition.stop();
     }
