@@ -90,27 +90,35 @@
   var startButton = document.getElementById('start');
   var stopButton = document.getElementById('stop');
   var resultElement = document.getElementById('result');
+  var recognition;
 
-  var recognition = new webkitSpeechRecognition();
-  recognition.lang = 'id-ID';
-  recognition.interimResults = true;
+  function startRecognition() {
+    recognition = new webkitSpeechRecognition();
+    recognition.lang = 'id-ID';
+    recognition.interimResults = true;
+    recognition.continuous = true;
+
+    recognition.addEventListener('result', (event) => {
+      var finalTranscript = '';
+      for (var i = 0; i < event.results.length; ++i) {
+        finalTranscript += event.results[i][0].transcript;
+      }
+      resultElement.value = finalTranscript; // Menggunakan "=" untuk mengganti teks yang sudah ada dengan teks baru
+    });
+
+    recognition.start();
+  }
 
   startButton.addEventListener('click', () => {
     startButton.classList.add('pulse-animation'); // tambahkan kelas animasi
-    recognition.start();
+    startRecognition();
   });
 
   stopButton.addEventListener('click', () => {
     startButton.classList.remove('pulse-animation'); // hapus kelas animasi
-    recognition.stop();
-  });
-
-  recognition.addEventListener('result', (event) => {
-    var finalTranscript = '';
-    for (var i = 0; i < event.results.length; ++i) {
-      finalTranscript += event.results[i][0].transcript;
+    if (recognition) {
+      recognition.stop();
     }
-    resultElement.textContent = finalTranscript;
   });
 </script>
 </body>
