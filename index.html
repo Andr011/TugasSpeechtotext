@@ -84,11 +84,13 @@
   <br>
   <button id="start">Start</button>
   <button id="stop">Stop</button>
+  <button id="clear">Clear</button> <!-- Tombol untuk menghapus teks -->
 </div>
 
 <script>
   var startButton = document.getElementById('start');
   var stopButton = document.getElementById('stop');
+  var clearButton = document.getElementById('clear');
   var resultElement = document.getElementById('result');
   var recognition;
   var currentText = ''; // Variabel penampung untuk teks yang sudah ada sebelumnya
@@ -136,6 +138,11 @@
     if (recognition) {
       recognition.stop();
     }
+  });
+
+  clearButton.addEventListener('click', function() {
+    resultElement.value = ''; // Menghapus teks di textarea
+    currentText = ''; // Mengatur ulang variabel penampung teks
   });
 </script>
 </body>
